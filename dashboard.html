@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema de Licenças</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-left">
+            <div class="shield-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-1 6h2v6h-2V7zm0 8h2v2h-2v-2z"/>
+                </svg>
+            </div>
+            <div>
+                <h2>Sistema de Licenças</h2>
+                <p>Gestão Empresarial</p>
+            </div>
+        </div>
+        <div class="navbar-right">
+            <button class="btn-text-icon" id="logoutBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                </svg>
+                Sair
+            </button>
+        </div>
+    </div>
+
+    <div class="dashboard-content">
+        <div class="summary-cards">
+            <div class="card summary-card">
+                <div class="summary-title">Total de Licenças <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M14 10H2v2h12v-2zm0-4H2v2h12V6zm4 8v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zM2 16h8v-2H2v2z"/></svg></div>
+                <div class="summary-value" id="totalLicenses">3</div>
+                <div class="summary-description">Licenças cadastradas</div>
+            </div>
+            <div class="card summary-card active-card">
+                <div class="summary-title">Ativas <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></div>
+                <div class="summary-value" id="activeLicenses">1</div>
+                <div class="summary-description">Em conformidade</div>
+            </div>
+            <div class="card summary-card expiring-card">
+                <div class="summary-title">Expirando <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div>
+                <div class="summary-value" id="expiringLicenses">1</div>
+                <div class="summary-description">Atenção necessária</div>
+            </div>
+            <div class="card summary-card expired-card">
+                <div class="summary-title">Expiradas <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div>
+                <div class="summary-value" id="expiredLicenses">1</div>
+                <div class="summary-description">Requer renovação</div>
+            </div>
+        </div>
+
+        <div class="licenses-section card">
+            <div class="section-header">
+                <div>
+                    <h2>Licenças e Permissões</h2>
+                    <p>Gerencie todas as licenças necessárias para o funcionamento da empresa</p>
+                </div>
+                <button class="btn-primary" id="newLicenseBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                    Nova Licença
+                </button>
+            </div>
+
+            <table class="licenses-table">
+                <thead>
+                    <tr>
+                        <th>Licença</th>
+                        <th>Tipo</th>
+                        <th>Órgão Emissor</th>
+                        <th>Número</th>
+                        <th>Emissão</th>
+                        <th>Validade</th>
+                        <th>Status</th>
+                        <th></th> </tr>
+                </thead>
+                <tbody id="licensesTableBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="addLicenseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Adicionar Nova Licença</h3>
+                <button class="close-modal" id="closeModalBtn">&times;</button>
+            </div>
+            <p class="modal-description">Preencha as informações da licença ou permissão empresarial</p>
+
+            <form id="addLicenseForm">
+                <div class="form-group">
+                    <label for="licenseName">Nome da Licença</label>
+                    <input type="text" id="licenseName" placeholder="Ex: Licença Ambiental de Operação" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="licenseType">Tipo</label>
+                    <select id="licenseType" required>
+                        <option value="">Selecione o tipo</option>
+                        <option value="Ambiental">Ambiental</option>
+                        <option value="Operação">Operação</option>
+                        <option value="Trabalhista">Trabalhista</option>
+                        <option value="Sanitária">Sanitária</option>
+                        </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="emissionDate">Data de Emissão</label>
+                        <input type="date" id="emissionDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="validityDate">Data de Validade</label>
+                        <input type="date" id="validityDate" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="issuer">Órgão Emissor</label>
+                    <input type="text" id="issuer" placeholder="Ex: IBAMA, Prefeitura Municipal" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="licenseNumber">Número/Protocolo</label>
+                    <input type="text" id="licenseNumber" placeholder="Ex: LAO-2023-001" required>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" id="cancelAddLicenseBtn">Cancelar</button>
+                    <button type="submit" class="btn-primary">Adicionar Licença</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>

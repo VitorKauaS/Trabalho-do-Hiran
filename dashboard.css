@@ -405,3 +405,71 @@ body {
     background-color: #e0e2e6;
     color: #333;
 }
+
+/* Media Query para telas menores que 992px (tablets e celulares grandes) */
+@media (max-width: 992px) {
+    .dashboard-content {
+        padding: 20px; /* Reduz o padding geral */
+    }
+
+    /* Empilha os cartões de resumo */
+    .summary-cards {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+}
+/* Media Query para telas menores que 600px (celulares) */
+@media (max-width: 600px) {
+    /* Navbar: Empilha o título e o botão Sair, ou simplifica */
+    .navbar {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 15px 20px;
+    }
+
+    .navbar-left {
+        margin-bottom: 10px;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .section-header p {
+        /* Garante que a descrição fique clara */
+        display: block; 
+    }
+
+    /* Tabela Responsiva - MUITO IMPORTANTE */
+    .licenses-table {
+        display: block;
+        width: 100%;
+        overflow-x: auto; /* Permite rolar a tabela horizontalmente */
+        white-space: nowrap; /* Evita que o conteúdo da célula quebre */
+    }
+
+    .licenses-table thead, .licenses-table tbody, .licenses-table th, .licenses-table td, .licenses-table tr {
+        /* Desativa o modelo de tabela padrão para usar o scroll */
+        display: table;
+        width: 100%;
+    }
+    
+    .licenses-table thead {
+        /* Garante que o cabeçalho fique visível e fixo se necessário */
+        display: table-header-group;
+    }
+
+    /* Modal - Ocupa a tela inteira em celulares */
+    .modal-content {
+        width: 95vw;
+        margin: 10px;
+        padding: 20px;
+    }
+
+    .form-row {
+        flex-direction: column; /* Empilha os campos de data */
+        gap: 0;
+    }
+}

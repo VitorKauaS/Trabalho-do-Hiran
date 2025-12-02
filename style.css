@@ -103,3 +103,26 @@ p {
 .btn-primary:hover {
     background-color: #1e4bb6; /* Tom mais escuro no hover */
 }
+
+/* Media Query para telas menores que 600px (celulares) */
+@media (max-width: 600px) {
+    .login-card {
+        width: 90%; /* Ocupa 90% da largura disponível */
+        padding: 30px 20px; /* Reduz o padding interno */
+        box-shadow: none; /* Opcional: Remover sombra em celular para um visual mais limpo */
+        margin: 20px;
+    }
+    
+    .login-container {
+        /* Garante que o container ocupe a altura total para centralizar */
+        min-height: 100vh;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    p {
+        font-size: 13px;
+    }
+}

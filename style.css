@@ -82,7 +82,7 @@ p {
 }
 
 .error-message {
-    color: #e74c3c; /* Vermelho para mensagens de erro */
+    color: #e74c3c; 
     font-size: 12px;
     margin-top: 5px;
     display: block; /* Garante que a mensagem fique em uma nova linha */

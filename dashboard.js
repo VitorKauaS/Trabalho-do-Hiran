@@ -1,195 +1,228 @@
-document.addEventListener('DOMContentLoaded', () => {
+// Quando a página carrega
+document.addEventListener('DOMContentLoaded', function() {
+    
+    // ======================
+    // 1. PEGA OS ELEMENTOS DO HTML
+    // ======================
+    
+    // Botões principais
     const logoutBtn = document.getElementById('logoutBtn');
     const newLicenseBtn = document.getElementById('newLicenseBtn');
-    const addLicenseModal = document.getElementById('addLicenseModal');
-    const closeModalBtn = document.getElementById('closeModalBtn');
-    const cancelAddLicenseBtn = document.getElementById('cancelAddLicenseBtn');
-    const addLicenseForm = document.getElementById('addLicenseForm');
-    const licensesTableBody = document.getElementById('licensesTableBody');
-
-    // Elementos do contador
-    const totalLicensesSpan = document.getElementById('totalLicenses');
-    const activeLicensesSpan = document.getElementById('activeLicenses');
-    const expiringLicensesSpan = document.getElementById('expiringLicenses');
-    const expiredLicensesSpan = document.getElementById('expiredLicenses');
-
-    // Simulação de um "banco de dados" de licenças
+    
+    // Modal (popup)
+    const modal = document.getElementById('addLicenseModal');
+    const closeBtn = document.getElementById('closeModalBtn');
+    const cancelBtn = document.getElementById('cancelAddLicenseBtn');
+    
+    // Formulário do modal
+    const licenseForm = document.getElementById('addLicenseForm');
+    
+    // Onde a tabela vai ser preenchida
+    const tableBody = document.getElementById('licensesTableBody');
+    
+    // Números dos cards (total, ativas, etc)
+    const totalEl = document.getElementById('totalLicenses');
+    const activeEl = document.getElementById('activeLicenses');
+    const expiringEl = document.getElementById('expiringLicenses');
+    const expiredEl = document.getElementById('expiredLicenses');
+    
+    // ======================
+    // 2. DADOS DE EXEMPLO
+    // ======================
+    
+    // Lista de licenças 
     let licenses = [
         {
-            id: 1,
-            name: "Licença Ambiental de Operação",
-            type: "Ambiental",
-            issuer: "IBAMA",
-            number: "LAO-2023-001",
-            emissionDate: "2023-01-14",
-            validityDate: "2025-12-30"
+            name: 'Licença Ambiental',
+            type: 'Ambiental',
+            issuer: 'IBAMA',
+            number: 'LAO-2023-001',
+            emission: '2023-01-15',
+            validity: '2024-01-15',
+            status: 'expirada'  
         },
         {
-            id: 2,
-            name: "Alvará de Funcionamento",
-            type: "Operação",
-            issuer: "Prefeitura Municipal",
-            number: "ALV-2023-045",
-            emissionDate: "2023-03-19",
-            validityDate: "2024-12-19" // Expira em breve (expirando)
+            name: 'Alvará de Funcionamento',
+            type: 'Operação',
+            issuer: 'Prefeitura',
+            number: 'AF-2023-045',
+            emission: '2023-03-10',
+            validity: '2024-12-31',
+            status: 'ativa'
         },
         {
-            id: 3,
-            name: "Certificado de Regularidade FGTS",
-            type: "Trabalhista",
-            issuer: "Caixa Econômica Federal",
-            number: "CRF-2023-789",
-            emissionDate: "2023-02-09",
-            validityDate: "2024-02-09" // Expirada
+            name: 'Licença Sanitária',
+            type: 'Sanitária',
+            issuer: 'Vigilância',
+            number: 'LS-2023-078',
+            emission: '2023-06-20',
+            validity: '2023-12-20',
+            status: 'expirando'
         }
     ];
-
-    // --- Funções Auxiliares ---
-
-    function formatDate(dateString) {
-        const [year, month, day] = dateString.split('-');
-        return `${day}/${month}/${year}`;
+    
+    // ======================
+    // 3. FUNÇÕES PARA ATUALIZAR A TELA
+    // ======================
+    
+    // Atualiza os números dos cards (total: 3, ativas: 1, etc)
+    function updateCards() {
+        // Conta quantas licenças tem de cada tipo
+        totalEl.textContent = licenses.length;
+        activeEl.textContent = licenses.filter(l => l.status === 'ativa').length;
+        expiringEl.textContent = licenses.filter(l => l.status === 'expirando').length;
+        expiredEl.textContent = licenses.filter(l => l.status === 'expirada').length;
     }
-
-    function getLicenseStatus(validityDate) {
-        const today = new Date();
-        today.setHours(0, 0, 0, 0); // Para comparar apenas a data
-        const validity = new Date(validityDate);
-        validity.setHours(0, 0, 0, 0);
-
-        const diffTime = validity.getTime() - today.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-        if (diffDays < 0) {
-            return { text: 'Expirada', class: 'status-expirada' };
-        } else if (diffDays <= 90) { // Considerar "expirando" se faltar até 90 dias
-            return { text: 'Expirando', class: 'status-expirando' };
-        } else {
-            return { text: 'Ativa', class: 'status-ativa' };
-        }
-    }
-
-    function updateSummaryCards() {
-        let total = licenses.length;
-        let active = 0;
-        let expiring = 0;
-        let expired = 0;
-
+    
+    // Preenche a tabela com as licenças
+    function renderTable() {
+        // Limpa a tabela antes de preencher
+        tableBody.innerHTML = '';
+        
+        // Para cada licença, cria uma linha na tabela
         licenses.forEach(license => {
-            const status = getLicenseStatus(license.validityDate).text;
-            if (status === 'Ativa') {
-                active++;
-            } else if (status === 'Expirando') {
-                expiring++;
-            } else { // Expirada
-                expired++;
+            const row = document.createElement('tr');
+            
+            // Converte data de YYYY-MM-DD para DD/MM/YYYY
+            function formatDate(dateStr) {
+                if (!dateStr) return '';
+                const parts = dateStr.split('-');
+                return `${parts[2]}/${parts[1]}/${parts[0]}`;
             }
-        });
-
-        totalLicensesSpan.textContent = total;
-        activeLicensesSpan.textContent = active;
-        expiringLicensesSpan.textContent = expiring;
-        expiredLicensesSpan.textContent = expired;
-    }
-
-    function renderLicensesTable() {
-        licensesTableBody.innerHTML = ''; // Limpa a tabela antes de renderizar
-        licenses.forEach(license => {
-            const status = getLicenseStatus(license.validityDate);
-            const row = licensesTableBody.insertRow();
-            row.setAttribute('data-id', license.id); // Adiciona ID para facilitar a exclusão
-
+            
+            // Texto do status (Ativa, Expirando ou Expirada)
+            let statusText = 'Ativa';
+            if (license.status === 'expirando') statusText = 'Expirando';
+            if (license.status === 'expirada') statusText = 'Expirada';
+            
+            // Cria o HTML da linha da tabela
             row.innerHTML = `
                 <td>${license.name}</td>
                 <td>${license.type}</td>
                 <td>${license.issuer}</td>
                 <td>${license.number}</td>
-                <td>${formatDate(license.emissionDate)}</td>
-                <td>${formatDate(license.validityDate)}</td>
-                <td><span class="status-tag ${status.class}">${status.text}</span></td>
+                <td>${formatDate(license.emission)}</td>
+                <td>${formatDate(license.validity)}</td>
                 <td>
-                    <button class="delete-btn" data-id="${license.id}">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5L13 1H9.5L7 4H5v2h14V4z"/></svg>
+                    <span class="status-tag status-${license.status}">
+                        ${statusText}
+                    </span>
+                </td>
+                <td>
+                    <button class="delete-btn" data-number="${license.number}">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                        </svg>
                     </button>
                 </td>
             `;
+            
+            // Adiciona a linha na tabela
+            tableBody.appendChild(row);
         });
-        attachDeleteEventListeners(); // Anexa eventos de clique após renderizar
-    }
-
-    function attachDeleteEventListeners() {
-        document.querySelectorAll('.delete-btn').forEach(button => {
-            button.onclick = (event) => {
-                const licenseId = parseInt(event.currentTarget.getAttribute('data-id'));
-                deleteLicense(licenseId);
-            };
+        
+        // Adiciona evento de clique nos botões de deletar
+        document.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const licenseNumber = this.getAttribute('data-number');
+                deleteLicense(licenseNumber);
+            });
         });
     }
-
-    function deleteLicense(id) {
-        if (confirm('Tem certeza que deseja excluir esta licença?')) {
-            licenses = licenses.filter(license => license.id !== id);
-            renderLicensesTable();
-            updateSummaryCards();
-        }
+    
+    // ======================
+    // 4. FUNÇÕES DO MODAL (POPUP)
+    // ======================
+    
+    // Abre o modal para adicionar nova licença
+    function openModal() {
+        modal.classList.add('active');
+        licenseForm.reset();
     }
-
-    // --- Event Listeners ---
-
-    // Botão Sair - Redireciona para a página de login
-    logoutBtn.addEventListener('click', () => {
-        // Redireciona para a página de login (o index.html que criamos antes)
-        window.location.href = 'index.html';
-    });
-
-    // Abrir Modal de Nova Licença
-    newLicenseBtn.addEventListener('click', () => {
-        addLicenseModal.classList.add('active');
-    });
-
-    // Fechar Modal com o "X"
-    closeModalBtn.addEventListener('click', () => {
-        addLicenseModal.classList.remove('active');
-        addLicenseForm.reset(); // Limpa o formulário
-    });
-
-    // Fechar Modal com o botão "Cancelar"
-    cancelAddLicenseBtn.addEventListener('click', () => {
-        addLicenseModal.classList.remove('active');
-        addLicenseForm.reset(); // Limpa o formulário
-    });
-
-    // Fechar Modal clicando fora dele
-    addLicenseModal.addEventListener('click', (event) => {
-        if (event.target === addLicenseModal) {
-            addLicenseModal.classList.remove('active');
-            addLicenseForm.reset(); // Limpa o formulário
-        }
-    });
-
-    // Enviar formulário de Nova Licença
-    addLicenseForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-
+    
+    // Fecha o modal
+    function closeModal() {
+        modal.classList.remove('active');
+    }
+    
+    // Adiciona uma nova licença
+    function addLicense(event) {
+        event.preventDefault(); // Impede o formulário de recarregar a página
+        
+        // Pega os valores dos campos do formulário
         const newLicense = {
-            id: licenses.length > 0 ? Math.max(...licenses.map(l => l.id)) + 1 : 1, // Gerar um ID simples
             name: document.getElementById('licenseName').value,
             type: document.getElementById('licenseType').value,
-            emissionDate: document.getElementById('emissionDate').value,
-            validityDate: document.getElementById('validityDate').value,
             issuer: document.getElementById('issuer').value,
-            number: document.getElementById('licenseNumber').value
+            number: document.getElementById('licenseNumber').value,
+            emission: document.getElementById('emissionDate').value,
+            validity: document.getElementById('validityDate').value,
+            status: 'ativa' // Nova licença sempre começa como ativa
         };
-
+        
+        // Adiciona na lista
         licenses.push(newLicense);
-        renderLicensesTable();
-        updateSummaryCards();
-        addLicenseModal.classList.remove('active');
-        addLicenseForm.reset();
+        
+        // Atualiza a tela
+        updateCards();
+        renderTable();
+        
+        // Fecha o modal e mostra mensagem
+        closeModal();
         alert('Licença adicionada com sucesso!');
+    }
+    
+    // Remove uma licença
+    function deleteLicense(licenseNumber) {
+        if (!confirm('Tem certeza que deseja excluir esta licença?')) {
+            return; // Usuário cancelou
+        }
+        
+        // Filtra a lista, removendo a licença com esse número
+        licenses = licenses.filter(license => license.number !== licenseNumber);
+        
+        // Atualiza a tela
+        updateCards();
+        renderTable();
+        
+        alert('Licença excluída!');
+    }
+    
+    // ======================
+    // 5. CONFIGURA OS BOTÕES
+    // ======================
+    
+    // Botão "Nova Licença" → Abre modal
+    newLicenseBtn.addEventListener('click', openModal);
+    
+    // Botões de fechar modal
+    closeBtn.addEventListener('click', closeModal);
+    cancelBtn.addEventListener('click', closeModal);
+    
+    // Fechar modal clicando fora (no overlay)
+    modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
     });
-
-    // --- Inicialização ---
-    updateSummaryCards();
-    renderLicensesTable();
+    
+    // Formulário de nova licença
+    licenseForm.addEventListener('submit', addLicense);
+    
+    // Botão "Sair" → Volta para login
+    logoutBtn.addEventListener('click', function() {
+        if (confirm('Deseja sair do sistema?')) {
+            // Em app real, aqui limparia a sessão
+            window.location.href = 'index.html';
+        }
+    });
+    
+    // ======================
+    // 6. INICIA O SISTEMA
+    // ======================
+    
+    // Primeira atualização da tela
+    updateCards();
+    renderTable();
+    
 });

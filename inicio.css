@@ -1,0 +1,46 @@
+ body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; 
+    margin: 0;
+}
+.shield-icon{
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 20px auto;
+}
+.shield-img{
+    height: 100px;
+    width: 100px;
+}
+.div-container {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    text-align: center;
+    width: 580px; /* Largura ajustada para a imagem */
+    max-width: 120vw;
+}
+.botao {
+    background-color: #2a61e7; /* Azul do botão */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer; /* Cursor de mão ao passar sobre */
+    width: 100%;
+    transition: background-color 0.3s ease; /* Transição suave para hover */
+}
+p {
+        display: flex;
+        justify-content: center;
+}
+.titulo {
+        display: flex;
+        justify-content: center;
+}

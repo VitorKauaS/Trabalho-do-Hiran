@@ -1,0 +1,107 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Garante que o body tenha pelo menos 100% da altura da viewport */
+    margin: 0;
+}
+
+.cadastro-container {
+    padding: 20px; /* Espaçamento interno ao redor do card */
+}
+
+.cadastro-card {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 40px;
+    text-align: center;
+    width: 380px; /* Largura ajustada para a imagem */
+    max-width: 90vw; /* Responsividade básica */
+}
+
+.form-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block; /* Faz o label ocupar toda a linha */
+    margin-bottom: 8px;
+    color: #333;
+    font-weight: bold;
+    font-size: 14px;
+} 
+
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group input[type="text"] {
+    width: calc(100% - 0px); /* Largura total menos 20px */
+    padding: 12px 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    box-sizing: border-box; /* Inclui padding e borda na largura total */
+}
+
+/* Estilo quando o input está em foco (clicado/selecionado) */
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus,
+.form-group input[type="text"]:focus {
+    outline: none; /* Remove outline padrão do navegador */
+    border-color: #2a61e7;
+    box-shadow: 0 0 0 3px rgba(42, 97, 231, 0.2);
+}
+
+.invalid {
+    border-color: #e74c3c !important;
+    box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.2) !important;
+}
+
+.error-message {
+    color: #e74c3c; 
+    font-size: 12px;
+    margin-top: 5px;
+    display: block; /* Garante que a mensagem fique em uma nova linha */
+}
+
+.btn {
+    background-color: #2a61e7; /* Azul do botão */
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 12px 20px;
+    font-size: 16px;
+    cursor: pointer; /* Cursor de mão ao passar sobre */
+    width: 100%;
+    transition: background-color 0.3s ease; /* Transição suave para hover */
+}
+
+.btn:hover {
+    background-color: #1e4bb6; /* Tom mais escuro no hover */
+}
+
+/* Media Query para telas menores que 600px (celulares) */
+@media (max-width: 600px) {
+    .cadastro-card {
+        width: 90%; /* Ocupa 90% da largura disponível */
+        padding: 30px 20px; /* Reduz o padding interno */
+        box-shadow: none; /* Remover sombra em celular para um visual mais limpo */
+        margin: 20px;
+    }
+    
+    .cadastro-container {
+        /* Garante que centralize corretamente mesmo com altura menor */
+        min-height: 100vh;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    p {
+        font-size: 13px;
+    }
+}

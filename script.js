@@ -1,35 +1,54 @@
-// Aguarda até que o HTML esteja completamente carregado
+if (!localStorage.getItem('userEmail')) {
+    window.location.href = 'login.html'; // Expulsa quem tentar entrar direto pela URL
+}
 document.addEventListener('DOMContentLoaded', () => {
-        // Seleciona os elementos principais do DOM
     const loginForm = document.getElementById('loginForm');
-    const email = document.getElementById('email');
+    const emailInput = document.getElementById('email'); // id do campo de login/email
+    const passwordInput = document.getElementById('password');
     const emailError = document.getElementById('emailError');
     
-     // Adiciona um ouvinte para quando o formulário for enviado
-    loginForm.addEventListener('submit', (e) => {
-        // Previne o comportamento padrão (recarregar página)
+    loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        // Limpa qualquer erro anterior do email
         emailError.textContent = '';
 
-        // Testa se o email tem formato válido usando regex
-        const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
-        
-        // Se email for inválido, mostra erro e para a execução
-        if (!isValid) {
-            emailError.textContent = 'E-mail inválido';
+        // 1. Validação básica de formato (Front-end)
+        const loginValue = emailInput.value.trim();
+        const passwordValue = passwordInput.value.trim();
+
+        if (!loginValue || !passwordValue) {
+            alert('Preencha todos os campos');
             return;
         }
-        
-         // Valida se a senha não está vazia
-        if (!document.getElementById('password').value.trim()) {
-            alert('Senha obrigatória');
-            return;
+
+        // 2. Preparar os dados para enviar ao PHP
+        // Usamos FormData para que o PHP receba como $_POST["pLogin"] e $_POST["pSenha"]
+        const dados = new FormData();
+        dados.append('pLogin', loginValue);
+        dados.append('pSenha', passwordValue);
+
+        try {
+            // 3. Chamada ao servidor (Back-end)
+            const response = await fetch('login_validar.php', {
+                method: 'POST',
+                body: dados
+            });
+
+            const resultado = await response.text();
+
+            // 4. Verificar a resposta do PHP
+            if (resultado.trim() === '1') {
+                // SUCESSO: Usuário existe e senha confere
+                localStorage.setItem('userEmail', loginValue);
+                window.location.href = 'dashboard.html';
+            } else {
+                // ERRO: Usuário não cadastrado ou senha errada
+                emailError.textContent = 'Usuário ou senha incorretos.';
+                emailError.style.color = 'red';
+            }
+
+        } catch (error) {
+            console.error('Erro na conexão:', error);
+            alert('Erro ao conectar com o servidor.');
         }
-        
-        // Salva o email no localStorage (para usar no dashboard)
-        localStorage.setItem('userEmail', email.value.trim());
-        // Redireciona para a página do dashboard
-        window.location.href = 'dashboard.html';
     });
 });
